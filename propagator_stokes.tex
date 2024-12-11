@@ -1,0 +1,76 @@
+
+\documentclass[a4paper,10pt,reqno]{amsart}
+
+\usepackage[english]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+
+\usepackage{subcaption}
+\usepackage[shortlabels]{enumitem}
+\setlist[enumerate]{label=(\roman*)}
+
+% Packages and macros go here
+\input{macros.sty}
+%%%% To get table of contents %%%%%%%%
+\setcounter{tocdepth}{2}% to get subsubsections in toc
+\usepackage{bibentry}
+
+\let\oldtocsection=\tocsection
+
+\let\oldtocsubsection=\tocsubsection
+\pagestyle{plain}
+\let\oldtocsubsubsection=\tocsubsubsection
+
+\renewcommand{\tocsection}[2]{\hspace{0em}\oldtocsection{#1}{#2}\textbf}
+\renewcommand{\tocsubsection}[2]{\hspace{1em}\oldtocsubsection{#1}{#2}}
+\renewcommand{\tocsubsubsection}[2]{\hspace{2em}\oldtocsubsubsection{#1}{#2}}
+\renewcommand{\paragraph}[1]{\noindent\underline{#1}}
+
+\begin{document}
+\title{ Stokes flows in semi-infinite strips }
+\author{}
+\thanks{\hspace*{0.3em}\textsuperscript{$*$} Corresponding author. Email:
+\texttt{florian.feppon@kuleuven.be}. \
+\hspace*{\parindent}
+}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2em}
+\begin{center}
+\emph{\textsuperscript{1} NUMA Unit, Department of Computer Science, KU Leuven,
+    Belgium.}
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract} 
+
+\end{abstract} 
+\medskip  
+\noindent \textbf{Keywords.} keyword1, keyword2. 
+
+\medskip
+\noindent \textbf{AMS Subject classifications.}  \par
+%35B34 resonances in the context of PDEs
+%35B40   	Asymptotic behavior of solutions to PDEs
+%45M05   	Asymptotics of solutions to integral equations
+%35J05   	Laplace operator, Helmholtz equation (reduced wave equation), Poisson equation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 35B10   	Periodic solutions to PDEs
+\medskip
+\bigskip
+\hrule
+\tableofcontents
+\vspace{-0.5cm}
+\hrule
+\medskip
+\bigskip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+
+
+\bibliography{references}
+\bibliographystyle{acm}
+\end{document}

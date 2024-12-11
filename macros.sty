@@ -1,0 +1,325 @@
+
+\usepackage{comment}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.arrows}
+\usepackage{pgfplots}
+\usepackage{epstopdf}
+\pgfplotsset{compat=1.17}
+
+\usepackage{stmaryrd}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{color}
+
+\SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}%For force table and figure position
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage[colorlinks=true]{hyperref}
+\definecolor{GreenLink}{RGB}{0,128,0}
+\hypersetup{
+      final,
+        linktoc=all,
+    colorlinks,
+        allcolors=GreenLink
+}
+\numberwithin{equation}{section}
+\usepackage{mathrsfs}
+\usetikzlibrary{matrix,positioning,decorations.pathreplacing,calc}
+\makeatletter
+\def\grd@save@target#1{%
+  \def\grd@target{#1}}
+\def\grd@save@start#1{%
+  \def\grd@start{#1}}
+\tikzset{
+  grid with coordinates/.style={
+    to path={%
+      \pgfextra{%
+        \edef\grd@@target{(\tikztotarget)}%
+        \tikz@scan@one@point\grd@save@target\grd@@target\relax
+        \edef\grd@@start{(\tikztostart)}%
+        \tikz@scan@one@point\grd@save@start\grd@@start\relax
+        \draw[minor help lines] (\tikztostart) grid (\tikztotarget);
+        \draw[major help lines] (\tikztostart) grid (\tikztotarget);
+        \grd@start
+        \pgfmathsetmacro{\grd@xa}{\the\pgf@x/1cm}
+        \pgfmathsetmacro{\grd@ya}{\the\pgf@y/1cm}
+        \grd@target
+        \pgfmathsetmacro{\grd@xb}{\the\pgf@x/1cm}
+        \pgfmathsetmacro{\grd@yb}{\the\pgf@y/1cm}
+        \pgfmathsetmacro{\grd@xc}{\grd@xa + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+        \pgfmathsetmacro{\grd@yc}{\grd@ya + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+        \foreach \x in {\grd@xa,\grd@xc,...,\grd@xb}
+        \node[anchor=north] at (\x,\grd@ya) {\pgfmathprintnumber{\x}};
+        \foreach \y in {\grd@ya,\grd@yc,...,\grd@yb}
+        \node[anchor=east] at (\grd@xa,\y) {\pgfmathprintnumber{\y}};
+      }
+    }
+  },
+  minor help lines/.style={
+    help lines,
+    step=\pgfkeysvalueof{/tikz/grid with coordinates/minor step}
+  },
+  major help lines/.style={
+    help lines,
+    line width=\pgfkeysvalueof{/tikz/grid with coordinates/major line width},
+    step=\pgfkeysvalueof{/tikz/grid with coordinates/major step}
+  },
+  grid with coordinates/.cd,
+  minor step/.initial=.2,
+  major step/.initial=1,
+  major line width/.initial=2pt,
+}
+
+\tikzset{
+    style1/.style={
+      matrix of math nodes,
+      every node/.append style={text width=#1,align=center,minimum height=5ex},
+      nodes in empty cells,
+      left delimiter=[,
+      right delimiter=],
+      },
+    style2/.style={
+      matrix of math nodes,
+      every node/.append style={text width=#1,align=center,minimum height=5ex},
+      nodes in empty cells,
+      left delimiter=\lbrace,
+      right delimiter=\rbrace,
+      }
+}
+\makeatother% Load TikZ
+\renewcommand{\bar}{\overline}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\renewcommand{\tilde}{\widetilde}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\FF}[1]{{\color{blue}FF: #1}}
+\newcommand{\D}{\ensuremath \,\mathrm{d}}
+\newcommand{\y}{{\bm y}} \newcommand{\z}{\bm z} 
+\newcommand{\<}{\ensuremath \leq}
+\renewcommand{\>}{\ensuremath \geq}
+\newcommand{\Sym}{\mathrm{Sym}}
+\renewcommand{\skew}{\mathrm{skew}}
+\newcommand{\grad}{\mathrm{\textbf{grad}}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Ran}{\mathrm{Ran}}
+\let\oldv\v
+\let\oldn n
+\renewcommand{\t}{\tilde}
+\renewcommand{\v}{{\bm v}}
+\newcommand{\w}{{\bm w}}
+\newcommand{\x}{{\bm {x}}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\DD}{\mathrm{D}}
+%\usepackage{subcaption}
+\renewcommand{\arraystretch}{1.5}
+%%LOCAL SHORTCUTS
+\renewcommand{\u}{{\bm u}}
+\newcommand{\f}{\bm F}
+\renewcommand{\div}{\mathrm{div}}
+\newcommand{\In}{\textrm{ in }}
+\newcommand{\On}{\textrm{ on }}
+\newcommand{\n}{{\bm  n}}
+\newcommand{\g}{{\bm g}}
+\newcommand{\h}{{\bm h}}
+\let\oldtau\tau
+\renewcommand{\tau}{\oldtau}
+%\let\oldtheta\theta
+%\renewcommand{\theta}{{\bm \oldtheta}}
+\renewcommand{\r}{\bm r}
+\newcommand{\partialn}[1]{\frac{\partial #1}{\partial n}}
+\newcommand{\ieps}{\epsilon^{-1}}
+\newcommand{\e}{{\bm e}}
+\newcommand{\At}{\textrm{ at }}
+\renewcommand{\L}{\mathcal{L}}
+\newcommand{\norm}[1]{\left|\left|#1\right|\right|}
+
+\newcommand{\vect}{\mathrm{span}}
+%\let\oldxi\xi
+%\renewcommand{\xi}{{\bm \oldxi}}
+\newcommand{\CC}{{\bm C}}
+%\let\oldmu\mu
+%\renewcommand{\mu}{{\bm \oldmu}}
+\newcommand{\pardiff}[2]{\frac{\partial #1}{\partial #2}}
+\usepackage[nameinlink,capitalize]{cleveref}
+\crefname{figure}{Figure}{Figs.}
+\crefname{equation}{}{}
+\usepackage{amsopn}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\dist}{dist}
+\newcommand{\If}{\textrm{ if }}
+\newcommand{\I}{I}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{lemma}{Lemma}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newcommand{\SSigma}{\overline{\Sigma}}
+\newcommand{\Chi}{\mathcal{X}}
+\renewcommand{\setminus}{-}
+\renewcommand{\paragraph}[1]{\noindent\underline{#1}}
+\newcommand{\etaPY}{\eta^{-1}P \setminus T}
+\newcommand{\B}{\mathbb{B}}
+\RequirePackage{silence}
+\WarningFilter{remreset}{The remreset package}
+\usepackage{thmtools}
+\declaretheoremstyle[
+spaceabove=6pt, spacebelow=6pt,
+headfont=\normalfont\bfseries,
+notefont=\mdseries, notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=0.6em,
+headpunct={}
+]{mystyle}
+\declaretheorem[style=mystyle, name={},preheadhook={\renewcommand{\thehyp}{(H{\arabic{hyp}})}}]{hyp}
+\crefname{hyp}{}{}
+\Crefname{hyp}{}{}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\CChi}{{\bm\Chi}}
+
+%\newcommand{\PPsi}{{\bm\Psi}}
+%\newcommand{\PPhi}{{\bm\Phi}}
+
+ %New line after subsection or subsubsection
+\makeatletter
+\def\subsection{\@startsection{subsection}{3}%
+  \z@{.5\linespacing\@plus.7\linespacing}{.5\linespacing}%
+  {\bf}}
+\makeatother
+
+\makeatletter
+\def\subsubsection{\@startsection{subsubsection}{3}%
+  \z@{.5\linespacing\@plus.7\linespacing}{.5\linespacing}%
+  {\it}}
+\makeatother
+
+
+\makeatletter
+\renewcommand*{\fps@figure}{htp}
+\makeatother
+\let\Cap\relax
+\DeclareMathOperator{\Cap}{cap}
+%\newcommand{\Cap}{\mathrm{cap}}
+\renewcommand{\a}{{\bm a}}
+\newcommand{\s}{{\bm s}}
+\renewcommand{\setminus}{\backslash}
+\renewcommand{\b}{{\bm b}}
+\newcommand{\M}{{\bm M}}
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\DN}{D_{N,s}}
+\renewcommand{\F}{{\bm F}}
+\newcommand{\IN}{{\rm in}}
+\newcommand{\tot}{{\rm tot}}
+\newcommand{\Peta}{{P\setminus(\eta T)}}
+\newcommand{\per}{{\rm per}}
+\newcommand{\loc}{{\rm loc}}
+\newcommand{\ii}{{\rm i}}
+\renewcommand{\t}{t}
+\newcommand{\eff}{{\rm eff}}
+\usetikzlibrary{matrix,positioning,decorations.pathreplacing,calc}
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usetikzlibrary{arrows.meta}
+\tikzset{
+  % style to apply some styles to each segment of a path
+  on each segment/.style={
+    decorate,
+    decoration={
+      show path construction,
+      moveto code={},
+      lineto code={
+        \path [#1]
+        (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+      },
+      curveto code={
+        \path [#1] (\tikzinputsegmentfirst)
+        .. controls
+        (\tikzinputsegmentsupporta) and (\tikzinputsegmentsupportb)
+        ..
+        (\tikzinputsegmentlast);
+      },
+      closepath code={
+        \path [#1]
+        (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+      },
+    },
+  },
+  % style to add an arrow in the middle of a path
+  mid arrow/.style={postaction={decorate,decoration={
+        markings,
+        mark=at position .5 with {\arrow[#1]{stealth}}
+      }}},
+}
+\makeatletter
+\def\grd@save@target#1{%
+  \def\grd@target{#1}}
+\def\grd@save@start#1{%
+  \def\grd@start{#1}}
+\tikzset{
+  grid with coordinates/.style={
+    to path={%
+      \pgfextra{%
+        \edef\grd@@target{(\tikztotarget)}%
+        \tikz@scan@one@point\grd@save@target\grd@@target\relax
+        \edef\grd@@start{(\tikztostart)}%
+        \tikz@scan@one@point\grd@save@start\grd@@start\relax
+        \draw[minor help lines] (\tikztostart) grid (\tikztotarget);
+        \draw[major help lines] (\tikztostart) grid (\tikztotarget);
+        \grd@start
+        \pgfmathsetmacro{\grd@xa}{\the\pgf@x/1cm}
+        \pgfmathsetmacro{\grd@ya}{\the\pgf@y/1cm}
+        \grd@target
+        \pgfmathsetmacro{\grd@xb}{\the\pgf@x/1cm}
+        \pgfmathsetmacro{\grd@yb}{\the\pgf@y/1cm}
+        \pgfmathsetmacro{\grd@xc}{\grd@xa + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+        \pgfmathsetmacro{\grd@yc}{\grd@ya + \pgfkeysvalueof{/tikz/grid with coordinates/major step}}
+        \foreach \x in {\grd@xa,\grd@xc,...,\grd@xb}
+        \node[anchor=north] at (\x,\grd@ya) {\pgfmathprintnumber{\x}};
+        \foreach \y in {\grd@ya,\grd@yc,...,\grd@yb}
+        \node[anchor=east] at (\grd@xa,\y) {\pgfmathprintnumber{\y}};
+      }
+    }
+  },
+  minor help lines/.style={
+    help lines,
+    step=\pgfkeysvalueof{/tikz/grid with coordinates/minor step}
+  },
+  major help lines/.style={
+    help lines,
+    line width=\pgfkeysvalueof{/tikz/grid with coordinates/major line width},
+    step=\pgfkeysvalueof{/tikz/grid with coordinates/major step}
+  },
+  grid with coordinates/.cd,
+  minor step/.initial=.2,
+  major step/.initial=1,
+  major line width/.initial=2pt,
+}
+
+\tikzset{
+    style1/.style={
+      matrix of math nodes,
+      every node/.append style={text width=#1,align=center,minimum height=5ex},
+      nodes in empty cells,
+      left delimiter=[,
+      right delimiter=],
+      },
+    style2/.style={
+      matrix of math nodes,
+      every node/.append style={text width=#1,align=center,minimum height=5ex},
+      nodes in empty cells,
+      left delimiter=\lbrace,
+      right delimiter=\rbrace,
+      }
+}
+\makeatother% Load TikZ
+\DeclareMathOperator{\sign}{sign}
