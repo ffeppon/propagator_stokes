@@ -1,4 +1,3 @@
-
 \usepackage{comment}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
@@ -122,6 +121,7 @@
 %\usepackage{subcaption}
 \renewcommand{\arraystretch}{1.5}
 %%LOCAL SHORTCUTS
+\let\oldu\u
 \renewcommand{\u}{{\bm u}}
 \newcommand{\f}{\bm F}
 \renewcommand{\div}{\mathrm{div}}
@@ -154,15 +154,19 @@
 \crefname{equation}{}{}
 \usepackage{amsopn}
 \DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\curl}{curl}
+\DeclareMathOperator{\bcurl}{\mathbf{curl}}
 \DeclareMathOperator{\diam}{diam}
 \DeclareMathOperator{\dist}{dist}
 \newcommand{\If}{\textrm{ if }}
 \newcommand{\I}{I}
+\theoremstyle{definition}
 \newtheorem{proposition}{Proposition}[section]
 \newtheorem{corollary}{Corollary}[section]
 \newtheorem{lemma}{Lemma}[section]
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
+\newtheorem{conjecture}{Conjecture}[section]
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}[section]
 \newcommand{\SSigma}{\overline{\Sigma}}
@@ -220,6 +224,8 @@ headpunct={}
 \newcommand{\DN}{D_{N,s}}
 \renewcommand{\F}{{\bm F}}
 \newcommand{\IN}{{\rm in}}
+\newcommand{\out}{{\rm out}}
+\newcommand{\wall}{{\rm wall}}
 \newcommand{\tot}{{\rm tot}}
 \newcommand{\Peta}{{P\setminus(\eta T)}}
 \newcommand{\per}{{\rm per}}
@@ -323,3 +329,5 @@ headpunct={}
 }
 \makeatother% Load TikZ
 \DeclareMathOperator{\sign}{sign}
+\newcommand{\bl}{{\rm bl}}
+\renewcommand{\epsilon}{\varepsilon}

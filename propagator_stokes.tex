@@ -27,7 +27,7 @@
 \renewcommand{\paragraph}[1]{\noindent\underline{#1}}
 
 \begin{document}
-\title{ Stokes flows in semi-infinite strips }
+\title{ Stokes flows in infinite periodic strips }
 \author{}
 \thanks{\hspace*{0.3em}\textsuperscript{$*$} Corresponding author. Email:
 \texttt{florian.feppon@kuleuven.be}. \
@@ -68,7 +68,88 @@
 \bigskip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+    
+We consider the infinite strip $\mathcal{B}$ and semi-infinite strip $\mathcal{B}_+$ illustrated    
+on \cref{fig:yad9r,fig:2w1yx} below.
+\begin{figure}
+    \centering  
+    \begin{tikzpicture}[scale=2.1]
+        \foreach \n in {0,1,...,7} {
+        \draw[fill=black!10!white] plot[smooth cycle, tension=2] coordinates {
+            ($(0.4+\n,0.3)$) ($(0.7+\n,0.5)$) ($(0.5+\n,0.7)$)  };
+    }   
+    \foreach \n in {1,2,...,8}{ 
+        \pgfmathsetmacro{\m}{int(\n-4)};
+        \draw ($(\n-0.5,0.5)$) node {$T_{\m}$};	
+        \draw ($(\n-0.85,0.85)$) node {$Y_{\m}$};	
+    }
+    \foreach \n in {1,2,...,7} {    
+        \pgfmathsetmacro{\m}{int(\n-3)};
+        \draw ($(\n,0.04)$) node[below] {$\Gamma_{\m}$};	
+        \draw[dotted] ($(\n,0)$)--($(\n,1)$); 
+    }
+    \draw (3.5,0) node[below] {$\Gamma_{\wall}$}; 
+    \draw (3.5,1) node[above] {$\Gamma_{\wall}$}; 
+    \draw (0,0) -- (8,0);   
+    \draw (8,1) -- (0,1);
+    \end{tikzpicture}
+    \caption{The infinite strip $\mathcal{B}$.}
+    \label{fig:yad9r}
+\end{figure}    
 
+\begin{figure}
+    \centering  
+    \begin{tikzpicture}[scale=1.8]
+    \draw[dashed] (2.4,0) -- (2.4,1); 
+    \draw (2.4,0) node[below] {$\Gamma_{x_1}$}; 
+        \foreach \n in {0,1,...,7} {
+        \draw[fill=black!10!white] plot[smooth cycle, tension=2] coordinates {
+            ($(0.4+\n,0.3)$) ($(0.7+\n,0.5)$) ($(0.5+\n,0.7)$)  };
+    }   
+    \foreach \n in {1,2,...,8}{ 
+        \pgfmathsetmacro{\m}{int(\n-1)};
+        \draw ($(\n-0.5,0.5)$) node {$T_{\m}$};	
+    }
+    \foreach \n in {1,2,...,7} {    
+        \draw[dotted] ($(\n,0)$)--($(\n,1)$); 
+    }
+    \draw (4,0) node[below] {$\Gamma_{\wall,+}$};
+    \draw (4,1) node[above] {$\Gamma_{\wall,+}$};
+    \draw (0,0) node[below] {$\Gamma_{0}$};
+    \draw (1,0) node[below] {$\Gamma_{1}$};
+    \draw (0,0) -- (8,0);   
+    \draw (8,1) -- (0,1);
+    \draw (0,0) -- (0,1);
+    %\foreach \y in {0,0.1,...,1} {  
+    %    \pgfmathsetmacro{\yy}{4*(\y*(1-\y)*(\y-0.5))}; 
+    %    \draw[->,>=stealth] (\yy,\y) -- (0,\y);
+    %}
+    \end{tikzpicture}
+    \caption{The semi-infinite strip $\mathcal{B}_{+}$.}
+    \label{fig:2w1yx}
+\end{figure}    
+    
+Let us denote by $\dot{H}^{\frac{1}{2}}_{00}(\Gamma_0)$ the space   of inlet
+velocities with zero flux.
+\newcommand{\dotH}{\dot{H}^{\frac{1}{2}}_{00}(\Gamma_0)}
+\[
+\dotH:=\left\{ \v\in H^{\frac{1}{2}}_{00}(\Gamma_0)\, | \,
+\int_{\Gamma_0}\v\cdot\e_1\D \sigma =0\right\}
+\] 
+For a given boundary datum $\v_0\in \dotH $, there exists a unique solution $(\v,p)\in
+H^{1}(\mathcal{B}_+)\times L^{2}(\mathcal{B}_+)$ to the
+following Stokes problem:  
+\[
+\left\{\begin{aligned}
+        -\Delta \v+\nabla p& = 0\In \mathcal{B}_+,\\    
+        \div(\v) &= 0 \In \mathcal{B}_+,\\  
+        \v& = 0 \On \partial \mathcal{B}_+\backslash \Gamma_0,\\    
+        \v &= \v_0.
+\end{aligned}
+\right.
+\] 
+    
+\cite{feppon_asymptotic_2024}, we know that the 
 
 
 \bibliography{references}
