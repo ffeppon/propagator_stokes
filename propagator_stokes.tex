@@ -27,8 +27,8 @@
 \renewcommand{\paragraph}[1]{\noindent\underline{#1}}
 
 \begin{document}
-\title{ Stokes flows in infinite periodic strips }
-\author{}
+\title{ Stokes flows in semi-infinite periodic strips }
+\author{F. Feppon$^{1}$, S. Fliss$^{2}$}
 \thanks{\hspace*{0.3em}\textsuperscript{$*$} Corresponding author. Email:
 \texttt{florian.feppon@kuleuven.be}. \
 \hspace*{\parindent}
@@ -40,8 +40,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2em}
 \begin{center}
-\emph{\textsuperscript{1} NUMA Unit, Department of Computer Science, KU Leuven,
-    Belgium.}
+\emph{\textsuperscript{1} KU Leuven, Department of Computer Science, NUMA Unit,
+    Belgium.}\\
+    \emph{\textsuperscript{2} ENSTA Paris, UMR 7231 CNRS-INRIA-ENSTA,
+    France.}
 \end{center}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -69,8 +71,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
     
-We consider the infinite strip $\mathcal{B}$ and semi-infinite strip $\mathcal{B}_+$ illustrated    
+We consider the infinite strip $\mathcal{B}$ and the semi-infinite strip $\mathcal{B}_+$ illustrated    
 on \cref{fig:yad9r,fig:2w1yx} below.
+The infinite strip $\mathcal{B}$ is defined by
+\[
+\mathcal{B}:= \bigcup_{i\in\Z} Y_i \text{ with }Y_i:=i\e_1 + Y,
+\]     
+ obtained by juxtaposing periodically
+the unit cell $Y$.     
+The unit cell $Y$ is represented on \cref{fig:1e8x0}:    
+it is defined as $Y=P\setminus \bar T$, where $P=(0,1)^{d}$     
+and $T\subset P$ is an open subdomain representing     
+the solid part. 
+
+
 \begin{figure}
     \centering  
     \begin{tikzpicture}[scale=2.1]
@@ -128,7 +142,27 @@ on \cref{fig:yad9r,fig:2w1yx} below.
     \caption{The semi-infinite strip $\mathcal{B}_{+}$.}
     \label{fig:2w1yx}
 \end{figure}    
-    
+
+\begin{figure}
+    \centering  
+    \begin{tikzpicture}[scale=4]
+        \draw (0,0) rectangle (1,1); 
+        \draw[dashed] (0.25,0) -- (0.25,1);   
+        \draw (0.25,0.8) node[right] {$\Gamma_{x_1}$}; 
+        \draw (0.25,0) node[below] {$(x_1,0)$}; 
+        \draw[fill=black!10!white] plot[smooth cycle, tension=2] coordinates { (0.2,0.3) (0.7,0.5) (0.5,0.7)  };
+        \node[above left] at (1,0.1) {$Y=P\setminus T$};
+        \node[above] at (0.5,1) {$\Gamma_w$};
+        \node[below] at (0.5,0) {$\Gamma_w$};
+        \node[above left] at (1,0) {$P=(0,1)^{d}$};
+        \node at (0.5,0.5) {$T$};
+        \node[left] at (0,0.5) {$\Gamma_{0}$}; 
+        \node[right] at (1,0.5) {$\Gamma_{1}$}; 
+    \end{tikzpicture}
+    \caption{The unit cell $Y=P\setminus \bar T$, the wall boundaries $\Gamma_w$ and the
+    section $\Gamma_{x_1}$.}
+    \label{fig:1e8x0}
+\end{figure}
 Let us denote by $\dot{H}^{\frac{1}{2}}_{00}(\Gamma_0)$ the space   of inlet
 velocities with zero flux.
 \newcommand{\dotH}{\dot{H}^{\frac{1}{2}}_{00}(\Gamma_0)}
@@ -148,10 +182,50 @@ following Stokes problem:
 \end{aligned}
 \right.
 \] 
+This is established in \cite{nazarov_navier-stokes_2000-1,feppon_asymptotic_2024}.  
     
-\cite{feppon_asymptotic_2024}, we know that the 
+The questions we want to investigate are:   
+\begin{itemize}
+    \item Can we propose a well-posedness theory for the Stokes operator in the
+        infinite strip $\mathcal{B}$ capturing various types of exponential
+        growth/decay in the strip? This seems to have been done extensively in
+        \cite{nazarov_navier-stokes_2000-1}.    
+    \item For the solution ($(\v,p)$) to the Stokes problem in the semi-infinite strip
+        $\mathcal{B}_+$, can we prove, for any $M\in\N$, an asymptotic expansion of
+        the form    
+        \begin{equation}
+        \label{eqn:chwra}
+        \v(x_1,x')=\sum_{i=0}^{M}\sum_{k=0}^{k_i} x_1^{k}e^{-\gamma_i
+        x_1}\u_{i,k}(x_1,x')+\v_M \text{ with }\v_M \in
+        W_\beta(\mathcal{B}_+),\forall \beta\in \C \text{ with
+        }\Re(\beta)>\Re(\gamma_M),
+        \end{equation}
+        \begin{equation}
+        \label{eqn:0ec8r}
+        p(x_1,x')=\sum_{i=0}^{M}\sum_{k=0}^{k_i} x_1^{k}e^{-\gamma_i
+        x_1}q_{i,k}(x_1,x')+q_M \text{ with }\v_M \in
+        W_\beta(\mathcal{B}_+),\forall \beta\in \C \text{ with
+        }\Re(\beta)>\Re(\gamma_M),
+        \end{equation}
+        where $W_{\beta}(\mathcal{B}_+)=\{ \w\,|\,e^{\beta x_1}\w \in
+        H^{1}(\mathcal{B}_+)\}$ is a space of functions decaying exponentially fast
+        at infinity.
+        Such type of result can hopefully be obtained with Kondratyev's theory
+        \cite{kozlov_elliptic_1997,nazarov_elliptic_2011}. Expansions of the form of
+        \cref{eqn:chwra,eqn:0ec8r} have been obtained for solutions to wave problems
+        in periodic structures in
+        \cite{hohage_riesz_2013,bourgeois_well-posedness_2018}.
+    \item Can we construct a numerical procedure based on propagation operators     
+        as in
+        \cite{fliss_dirichlet--neumann_2013,fliss_dirichlet--neumann_2021}? Can we
+        devise efficient schemes to compute limiting constants for the pressure?    
+        Formal numerical schemes have been proposed in the heat transfer engineering
+        community \cite{buckinx_macro-scale_2022,vangeffelen_developed_2023}.
+\end{itemize}
+\section{Numerical solution of the semi-infinite strip problem based on the
+propagator method}
+    
 
-
-\bibliography{references}
+\bibliography{references,fliss_feppon}
 \bibliographystyle{acm}
 \end{document}
