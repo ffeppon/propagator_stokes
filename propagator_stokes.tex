@@ -48,7 +48,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract} 
-
 \end{abstract} 
 \medskip  
 \noindent \textbf{Keywords.} keyword1, keyword2. 
@@ -227,10 +226,10 @@ The questions we want to investigate are:
 propagator method}
     
 In all what follows, we denote by $\mathcal{V}\,:\,\dotH\to H^{1}(\mathcal{B}_+)$ and
-$\mathcal{Q}\,:\ \dotH\to L^{2}(\mathcal{B}_+)$ the solutions
+$\mathcal{Q}\,:\ \dotH\to L^{2}(\mathcal{B}_+)$ the solution
 operators for \cref{eqn:235q7}: 
 \[
-    \mathcal{V}[\v_0]:=\v \text{ and }\mathcal{Q}\v_0:=p.
+    \mathcal{V}[\v_0]:=\v \text{ and }\mathcal{Q}[\v_0]:=p.
 \] 
 \begin{definition}
     We call `propagator operator' the mapping   
@@ -244,7 +243,7 @@ operators for \cref{eqn:235q7}:
     where $\v$ is the unique solution to the problem \cref{eqn:235q7}.
 \end{definition}
 It follows from interior regularity estimates that $\mathcal{P}$ is compact. We can
-also extend $\mathcal{P}$ on the whole $\mathcal{H}_{00}^{\frac{1}{2}}(\Gamma_0)$.
+also extend $\mathcal{P}$ on the whole $H_{00}^{\frac{1}{2}}(\Gamma_0)$.
 Let $(\Chi,\alpha)$ the solution to the periodic cell problem   
 \[
 \left\{\begin{aligned}
@@ -266,11 +265,11 @@ Indeed,
 +\underbrace{\left( \w-\frac{\int_{\Gamma_0}\w\cdot\n\D\sigma}{\int_{\Gamma_0}\Chi\cdot\n\D
 \sigma} \Chi \right)}_{\in \dotH}.
 \] 
-Thus, we can extend $\mathcal{P}$ to $H^{\frac{1}{2}}_{00}$ by setting     
+Thus, we can extend $\mathcal{P}$ to $H^{\frac{1}{2}}_{00}(\Gamma_0)$ by setting     
 \[
     \mathcal{P}[\Chi|_{\Gamma_0}] = \Chi|_{\Gamma_0}.
 \] 
-And similarly, we can extend $\mathcal{V}$ to $H^{\frac{1}{2}}_{00}$ by setting     
+And similarly, we can extend $\mathcal{V}$ to $H^{\frac{1}{2}}_{00}(\Gamma_0)$ by setting     
 \[
     \mathcal{V}[\Chi_{|\Gamma_0}](x_1,x')=\Chi(x_1,x'),\quad \forall (x_1,x')\in
     \mathcal{B}_+.
@@ -291,17 +290,17 @@ lemma.
     \left\{\begin{aligned}
             -\Delta \w_0+\nabla r_0 &=0 \In Y_0,\\  
             \div(\w_0) &= 0\In Y_1,
-    \end{aligned} \qquad
+    \end{aligned}\right. \qquad
     \left\{\begin{aligned}
             -\Delta \w_1+\nabla r_1 &=0 \In Y_1,\\  
             \div(\w_1) &= 0\In Y_1.
-    \end{aligned}
-    \right.
+    \end{aligned}\right.
     \end{equation}
     Then the velocity and pressure field $(\w,r)$ defined in $Y_0\cup Y_1$ by   
-    \[
+    \begin{equation}
+    \label{eqn:topkr}
         (\w,r)|_{Y_0}:=(\w_0,r_0) \text{ and }(\w_,r)|_{Y_1}:=(\w_1,r_1)
-    \] 
+    \end{equation}
     satisfies   
     \begin{equation}
     \label{eqn:s9bzn}   
@@ -311,11 +310,73 @@ lemma.
     \end{aligned}
     \right.
     \end{equation}
-    if and only if  
-    \[
-    \w_0|_{\Gamma_1}=\w_1|_{\Gamma_0} \text{ and }\dots
-    \] 
+    if and only if we have continuity of the function and of the conormal derivative
+    on the interface $\Gamma_1$:
+    \begin{equation}
+    \label{eqn:8zwjf}
+    \w_0|_{\Gamma_1}=\w_1|_{\Gamma_1} \text{ and
+    }\nabla\w_0\e_1-r_0\e_1\vert_{\Gamma_1}=\nabla \w_1\e_1-r_1\e_1\vert_{\Gamma_1}.
+    \end{equation}
 \end{lemma}
+\begin{proof}
+    Consider the problem    
+    \renewcommand{\w}{\widehat{\bm w}}
+    \[
+    \left\{\begin{aligned}
+            -\Delta \w +\nabla \hat r &= 0 \In Y_0\cup Y_1,\\    
+            \div(\w)& = 0 \In Y_0\cup Y_1,\\    
+            \w &=  \w_0 \On \partial Y_0\backslash \Gamma_1,\\  
+            \w &=  \w_1 \On \partial Y_1 \backslash\Gamma_1.
+    \end{aligned}
+    \right.
+    \] 
+    The variational formulation associated to this problem is   
+    \begin{multline}
+    \text{find }(\w,\hat r)\in H^{1}(Y_0\cup Y_1,\R^{d})\times L^{2}(Y_0\cup Y_1) \text{
+    such that }\w=\w_0 \On \partial Y_0\backslash\Gamma_1,\; \w=\w_1 \On \partial
+    Y_1\backslash\Gamma_1 \text{ and }\\    
+    \int_{Y_0\cup Y_1}\left(\nabla\w:\nabla \w'-\hat r \div(\w') -
+    r'\div(\w)\right) \D x =0, \\  \forall (\w',r')\in H^{1}(Y_0\cup Y_1)\times
+    L^{2}(Y_0\cup Y_1) \text{ with }\w'=0\On \partial (Y_0\cup Y_1).
+    \end{multline} 
+    It is readily seen that the velocity and pressure field $(\w,\hat r)$ defined by
+    \cref{eqn:topkr} satisfies  
+    \[
+    \int_{Y_0\cup Y_1}(\nabla\w:\nabla \w'-\hat r\div(\w')-r'\div'(\w))\D x =
+    \int_{\Gamma_1}\left[ (\nabla\w_0\e_1-r_0\e_1)-(\nabla \w_1\e_1-r_1\e_1)
+    \right]\cdot \w'\D \sigma.
+    \] 
+    \renewcommand{\w}{{\bm w}}     
+    Therefore, $(\w,r)$ satisfies \cref{eqn:s9bzn} if and only if \cref{eqn:8zwjf} is
+    satisfied. Then $\w=\hat \w$ and there exists a constant $C$ such that $r=\hat
+    r+C$. 
+\end{proof}
+In order to characterize the propagator operator through a Riccati equation, we
+follow the technique introduced in \cite{fliss_dirichlet--neumann_2013}. Let us
+introduce the operators $\mathcal{E}_0$ and $\mathcal{E}_1$ defined by  
+\begin{equation}
+    \label{eqn:2a0sn}\mathcal{E}_0[\pphi]:=\v_0 \text{ and
+    }\mathcal{E}_1[\pphi]:=\v_1 
+\end{equation}
+where $(\v_0,\alpha_0)$ and $(\v_1,\alpha_1)$ are the solutions to the Stokes
+problems
+\[
+    \left\{\begin{aligned}
+    -\Delta  \v_0 + \nabla \alpha_0 &= 0 \In Y_0,\\  
+    \div(\v_0) &= 0 \In Y_0,\\  
+    \v_0 &= \bm\phi \On \Gamma_0,\\    
+    \v_0 &=  0 \On \partial Y_0\backslash\Gamma_0,
+    \end{aligned}
+    \right.\qquad 
+\left\{\begin{aligned}
+    -\Delta  \v_1 + \nabla \alpha_1 &= 0 \In Y_0,\\  
+    \div(\v_1) &= 0 \In Y_0,\\  
+    \v_1 &= \bm\phi \On \Gamma_1,\\    
+    \v_1 &=  0 \On \partial Y_1\backslash\Gamma_1,
+    \end{aligned}
+    \right.
+\] 
+where $\alpha_0$ and $\alpha_1$ are for the moment defined up to a constant.
 \bibliography{references,fliss_feppon}
 \bibliographystyle{acm}
 \end{document}
