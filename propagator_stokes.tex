@@ -81,8 +81,11 @@ the unit cell $Y$.
 The unit cell $Y$ is represented on \cref{fig:1e8x0}:    
 it is defined as $Y=P\setminus \bar T$, where $P=(0,1)^{d}$     
 and $T\subset P$ is an open subdomain representing     
-the solid part. 
-
+the solid part.  We denote by   
+$\Gamma_{x_1}$ the section  
+\[
+    \Gamma_{x_1}:=\{ (x_1,x')\,|\, (x_1,x')\in \mathcal{B} \}.
+\] 
 
 \begin{figure}
     \centering  
@@ -231,13 +234,23 @@ operators for \cref{eqn:235q7}:
 \[
     \mathcal{V}[\v_0]:=\v \text{ and }\mathcal{Q}[\v_0]:=p.
 \] 
-\begin{definition}
+We denote by $\tau_{x_1}$ the translation     
+\[
+\tau_{x_1}(x_1,x'):=(x_1+1,x').
+\] 
+We shall denote by $\tau$   
+ the translation operator 
+\[
+    \tau[\pphi](x_1,x'):=\pphi\circ \tau_{x_1}(x_1,x')=\phi(x_1+1,x'),    
+\]                        %
+where the argument and ima%ge spaces will be clear from the context. 
+\begin{definition}        %
     We call `propagator operator' the mapping   
     \begin{equation}
     \label{eqn:6gnkg}   
     \begin{aligned}
         \mathcal{P}\,:\,& \dotH&  \to & \dotH \\  
-        & \v_0 &  \mapsto & (\mathcal{V}[\v_0])|_{\Gamma_1},
+        & \v_0 &  \mapsto & (\mathcal{V}[\v_0])|_{\Gamma_1}\circ \tau_{x_1}^{-1},
     \end{aligned}
     \end{equation}
     where $\v$ is the unique solution to the problem \cref{eqn:235q7}.
@@ -276,13 +289,15 @@ And similarly, we can extend $\mathcal{V}$ to $H^{\frac{1}{2}}_{00}(\Gamma_0)$ b
 \] 
 By uniqueness and periodicity of the strip, it holds then, for any $\v_0\in
 H^{\frac{1}{2}}_{00}(\Gamma_0)$: 
-\[
+\begin{equation}
+\label{eqn:o0rih}
     \mathcal{V}[\v_0](x_1+1,x')=\mathcal{V}\left[\mathcal{P}[\v_0]\right](x_1,x'),\quad
     \forall (x_1,x')\in \mathcal{B}_+.
-\] 
+\end{equation}
 In order to obtain a functional equation for $\mathcal{P}$, we need the following
 lemma.
 \begin{lemma}
+    \label{lem:3a1i0}
     Let $(\w_0,r_0)\in H^{1}(Y_0,\R^{d})\times L^{2}(Y_0)$ and $(\w_1,r_1)\in
     H^{1}(Y_1,\R^{d})\times L^{2}(Y_1)$ satisfying  
     \begin{equation}
@@ -353,30 +368,106 @@ lemma.
 \end{proof}
 In order to characterize the propagator operator through a Riccati equation, we
 follow the technique introduced in \cite{fliss_dirichlet--neumann_2013}. Let us
-introduce the operators $\mathcal{E}_0$ and $\mathcal{E}_1$ defined by  
+introduce the operators $\mathcal{E}_0\,:\, \dotH\to H^{1}(Y_0,\R^{d})$, 
+$\mathcal{E}_1\,:\,\dot H^{\frac{1}{2}}_{00}(\Gamma_1)\to H^{1}(Y_0,\R^{d})$,   
+$\mathcal{A}_0\,:\, \dotH\to L^{2}_0(Y_0)$ and   
+$\mathcal{A}_1\,:\, \dot H^{\frac{1}{2}}_{00}(\Gamma_1)\to L^{2}_0(Y_0)$ the
+operators defined by    
 \begin{equation}
-    \label{eqn:2a0sn}\mathcal{E}_0[\pphi]:=\v_0 \text{ and
-    }\mathcal{E}_1[\pphi]:=\v_1 
+    \label{eqn:2a0sn}\mathcal{E}_0[\pphi_0]:=\v_0 \text{ and
+    }\mathcal{E}_1[\pphi_1]:=\v_1 
 \end{equation}
-where $(\v_0,\alpha_0)$ and $(\v_1,\alpha_1)$ are the solutions to the Stokes
+\begin{equation}
+\label{eqn:qywvj}   
+\mathcal{A}_0[\pphi_0]:=\alpha_0 \text{ and }\mathcal{A}_1[\pphi_1]:=\alpha_1.
+\end{equation}
+where $(\v_0,\alpha_0)$ and $(\v_1,\alpha_1)$ are the unique solutions to the Stokes
 problems
 \[
     \left\{\begin{aligned}
     -\Delta  \v_0 + \nabla \alpha_0 &= 0 \In Y_0,\\  
     \div(\v_0) &= 0 \In Y_0,\\  
-    \v_0 &= \bm\phi \On \Gamma_0,\\    
-    \v_0 &=  0 \On \partial Y_0\backslash\Gamma_0,
+    \v_0 &= \bm\phi_0 \On \Gamma_0,\\    
+    \v_0 &=  0 \On \partial Y_0\backslash\Gamma_0,  \\
+    \int_{Y_0}\alpha_0\D x &= 0,
     \end{aligned}
     \right.\qquad 
 \left\{\begin{aligned}
     -\Delta  \v_1 + \nabla \alpha_1 &= 0 \In Y_0,\\  
     \div(\v_1) &= 0 \In Y_0,\\  
-    \v_1 &= \bm\phi \On \Gamma_1,\\    
-    \v_1 &=  0 \On \partial Y_1\backslash\Gamma_1,
+    \v_1 &= \bm\phi_1 \On \Gamma_1,\\    
+    \v_1 &=  0 \On \partial Y_1\backslash\Gamma_1,  \\
+    \int_{Y_0}\alpha_1\D x &= 0.
     \end{aligned}
     \right.
 \] 
-where $\alpha_0$ and $\alpha_1$ are for the moment defined up to a constant.
+By definition of $\mathcal{E}_0$ and $\mathcal{E}_1$, we have     
+\[
+    \mathcal{V}[\v_0]=\mathcal{E}_0[\v_0]+\mathcal{E}_1[\mathcal{P}[\v_0]\circ \tau_{x_1}]
+    \In Y_0,
+\] 
+and there exists a constant $c_0\in\R$ such that   
+\[
+    \mathcal{Q}[\v_0]=\mathcal{A}_0[\v_0]+\mathcal{A}_1[\mathcal{P}[\v_0]\circ\tau_{x_1}]+c_0\In
+    Y_0.
+\] 
+Moreover, due to \cref{eqn:o0rih}, we also have
+\[
+    \mathcal{V}[\v_0]=\mathcal{E}_0[\mathcal{P}[\v_0]]\circ \tau_{x_1} +
+    \mathcal{E}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}]\circ \tau_{x_1} \In Y_1,
+\] 
+\[
+    \mathcal{Q}[\v_0]=\mathcal{A}_0[\mathcal{P}[\v_0]]\circ \tau_{x_1} +
+    \mathcal{A}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}]\circ \tau_{x_1}+c_1 \In Y_1,
+\] 
+for another constant $c_1\in\R$.
+Since $\mathcal{V}[\v_0]$ is the solution to a Stokes problem in $Y_0\cup Y_1$,
+the continuity of the conormal derivative on $\Gamma_1$, viz.
+\[
+    \sigma(\mathcal{V}[\v_0],\mathcal{Q}[\v_0])\e_1\vert_{\Gamma_0} =
+    \sigma(\mathcal{V}[\v_0],\mathcal{Q}[\v_0])\e_1\vert_{\Gamma_1},
+\]  
+yields  
+\begin{multline}
+    \label{eqn:6yer5}
+    \sigma(\mathcal{E}_0[\v_0],\mathcal{A}_0[\v_0])\e_1\vert_{\Gamma_1}    
+    +\sigma(\mathcal{E}_1[\mathcal{P}[\v_0]\circ
+    \tau_{x_1}],\mathcal{A}_1[\mathcal{P}[\v_0]]\circ\tau_{x_1})\e_1\vert_{\Gamma_1}    
+    -c_0\e_1\\  
+    =\left[\sigma(\mathcal{E}_0[\mathcal{P}[\v_0]],\mathcal{A}_0[\mathcal{P}[\v_0]])\e_1   
+    +\sigma(\mathcal{E}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}],
+    \mathcal{A}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}])\e_1\right]\vert_{\Gamma_0}\circ\tau_{x_1}-c_1\e_1
+\end{multline} 
+For $i,j\in\{0,1\}$, let us denote by    
+$\mathcal{T}^{ij}:\dot H^{\frac{1}{2}}_{00}(\Gamma_j)\to
+H^{-\frac{1}{2}}_{00}(\Gamma_i)$ the Dirichlet-to-Neumann (DtN) operator  
+\[
+    \mathcal{T}^{ij}[\pphi]:=\sigma(\mathcal{E}_j[\pphi],\mathcal{A}_j[\pphi])\e_1\big\vert_{\Gamma_i}.
+\] 
+From \cref{eqn:6yer5}, we obtain thus    
+\[
+    \mathcal{T}^{10}+\mathcal{T}^{11} \tau \mathcal{P} -
+    \tau\mathcal{T}^{00}\mathcal{P}-\tau\mathcal{T}^{01}\tau\mathcal{P}^{2}=(c_0-c_1)\e_1,
+\] 
+which can be rewritten as   
+\[
+    \mathcal{R}^{10}+(\mathcal{R}^{11}+
+    \mathcal{R}^{00})\mathcal{P}+\mathcal{R}^{01}\mathcal{P}^{2}=(c_0-c_1)\e_1, 
+\]  
+with 
+\[
+\mathcal{R}^{10}:=\tau^{-1}\mathcal{T}^{10}, \quad     
+    \mathcal{R}^{11}:=\tau^{-1}\mathcal{T}^{11}\tau, \quad  
+    \mathcal{R}^{00}:=-\mathcal{T}^{00}, \quad  
+    \mathcal{R}^{01}:=-\mathcal{T}^{01}\tau,
+\] 
+where all these operators maps $\dotH $ to $\dotH$.
+We now need to identify the constant $c_0-c_1$.
+%Due to
+%\cref{eqn:o0rih}, it holds  
+%\[
+%
+%\] 
 \bibliography{references,fliss_feppon}
 \bibliographystyle{acm}
 \end{document}
