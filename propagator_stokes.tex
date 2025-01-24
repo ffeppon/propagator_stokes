@@ -241,16 +241,18 @@ We denote by $\tau_{x_1}$ the translation
 We shall denote by $\tau$   
  the translation operator 
 \[
-    \tau[\pphi](x_1,x'):=\pphi\circ \tau_{x_1}(x_1,x')=\phi(x_1+1,x'),    
+    \tau[\pphi](x_1,x'):=\pphi\circ \tau_{x_1}^{-1}(x_1,x')=\pphi(x_1-1,x'),    
 \]                        %
-where the argument and ima%ge spaces will be clear from the context. 
+which translates a function $\pphi$ defined on $\Gamma_0$ on a function defined on
+$\Gamma_1$, 
+where the precise argument and image spaces will be clear from the context. 
 \begin{definition}        %
     We call `propagator operator' the mapping   
     \begin{equation}
     \label{eqn:6gnkg}   
     \begin{aligned}
         \mathcal{P}\,:\,& \dotH&  \to & \dotH \\  
-        & \v_0 &  \mapsto & (\mathcal{V}[\v_0])|_{\Gamma_1}\circ \tau_{x_1}^{-1},
+        & \v_0 &  \mapsto & (\mathcal{V}[\v_0])|_{\Gamma_1}\circ \tau_{x_1},
     \end{aligned}
     \end{equation}
     where $\v$ is the unique solution to the problem \cref{eqn:235q7}.
@@ -366,6 +368,7 @@ lemma.
     satisfied. Then $\w=\hat \w$ and there exists a constant $C$ such that $r=\hat
     r+C$. 
 \end{proof}
+\subsection{Characterization of the propagation operator: a first Riccati equation}
 In order to characterize the propagator operator through a Riccati equation, we
 follow the technique introduced in \cite{fliss_dirichlet--neumann_2013}. Let us
 introduce the operators $\mathcal{E}_0\,:\, \dotH\to H^{1}(Y_0,\R^{d})$, 
@@ -401,73 +404,247 @@ problems
     \end{aligned}
     \right.
 \] 
-By definition of $\mathcal{E}_0$ and $\mathcal{E}_1$, we have     
-\[
-    \mathcal{V}[\v_0]=\mathcal{E}_0[\v_0]+\mathcal{E}_1[\mathcal{P}[\v_0]\circ \tau_{x_1}]
-    \In Y_0,
-\] 
-and there exists a constant $c_0\in\R$ such that   
-\[
-    \mathcal{Q}[\v_0]=\mathcal{A}_0[\v_0]+\mathcal{A}_1[\mathcal{P}[\v_0]\circ\tau_{x_1}]+c_0\In
-    Y_0.
-\] 
-Moreover, due to \cref{eqn:o0rih}, we also have
-\[
-    \mathcal{V}[\v_0]=\mathcal{E}_0[\mathcal{P}[\v_0]]\circ \tau_{x_1} +
-    \mathcal{E}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}]\circ \tau_{x_1} \In Y_1,
-\] 
-\[
-    \mathcal{Q}[\v_0]=\mathcal{A}_0[\mathcal{P}[\v_0]]\circ \tau_{x_1} +
-    \mathcal{A}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}]\circ \tau_{x_1}+c_1 \In Y_1,
-\] 
-for another constant $c_1\in\R$.
-Since $\mathcal{V}[\v_0]$ is the solution to a Stokes problem in $Y_0\cup Y_1$,
-the continuity of the conormal derivative on $\Gamma_1$, viz.
-\[
-    \sigma(\mathcal{V}[\v_0],\mathcal{Q}[\v_0])\e_1\vert_{\Gamma_0} =
-    \sigma(\mathcal{V}[\v_0],\mathcal{Q}[\v_0])\e_1\vert_{\Gamma_1},
-\]  
-yields  
-\begin{multline}
-    \label{eqn:6yer5}
-    \sigma(\mathcal{E}_0[\v_0],\mathcal{A}_0[\v_0])\e_1\vert_{\Gamma_1}    
-    +\sigma(\mathcal{E}_1[\mathcal{P}[\v_0]\circ
-    \tau_{x_1}],\mathcal{A}_1[\mathcal{P}[\v_0]]\circ\tau_{x_1})\e_1\vert_{\Gamma_1}    
-    -c_0\e_1\\  
-    =\left[\sigma(\mathcal{E}_0[\mathcal{P}[\v_0]],\mathcal{A}_0[\mathcal{P}[\v_0]])\e_1   
-    +\sigma(\mathcal{E}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}],
-    \mathcal{A}_1[\mathcal{P}^{2}[\v_0]\circ\tau_{x_1}])\e_1\right]\vert_{\Gamma_0}\circ\tau_{x_1}-c_1\e_1
-\end{multline} 
 For $i,j\in\{0,1\}$, let us denote by    
 $\mathcal{T}^{ij}:\dot H^{\frac{1}{2}}_{00}(\Gamma_j)\to
 H^{-\frac{1}{2}}_{00}(\Gamma_i)$ the Dirichlet-to-Neumann (DtN) operator  
 \[
     \mathcal{T}^{ij}[\pphi]:=\sigma(\mathcal{E}_j[\pphi],\mathcal{A}_j[\pphi])\e_1\big\vert_{\Gamma_i}.
 \] 
-From \cref{eqn:6yer5}, we obtain thus    
+    
+The operators $\mathcal{E}_0$ and $\mathcal{E}_1$ can be used to construct Stokes
+solutions in $Y_0\cup Y_1$. In order to do this, we need an additional operator     
+$\delta \mathcal{Q}$ which computes the pressure difference between two cells.    
+\begin{definition}
+    We denote by $\delta \mathcal{Q}$ the operator  
+    \begin{equation}
+    \label{eqn:rfy49}
+        \delta \mathcal{Q}[\w_0,\w_2]:=\int_{Y_1}q\D x-\int_{Y_0}q\D x
+    \end{equation}
+    where $(\w,q)$ is a solution to        
+    \begin{equation}
+    \label{eqn:c3i38}
+    \left\{\begin{aligned}
+            -\Delta \w+\nabla q &= 0 \In Y_0\cup Y_1,\\ 
+            \div(\w) &= 0 \In Y_0\cup\Y_1,\\  
+            \w &= 0 \On \partial(Y_0\cup \partial Y_1)\backslash
+            (\Gamma_0\cup\Gamma_1\cup\Gamma_2),\\   
+            \w& = \w_0 \On\Gamma_0,\\   
+            \w& = \w_2\On\Gamma_2.
+    \end{aligned}
+    \right.
+    \end{equation}
+    The operator $\mathcal{\delta Q}$ does not depend on the additive constant
+    determining
+    the pressure $q$. There exists then a constant $c\in\R$ such that
+    \[
+    \w= \left\{\begin{aligned}
+            \mathcal{E}_0[\w_0]+\mathcal{E}_1[\w|_{\Gamma_1}] \In Y_0,\\
+            \tau\mathcal{E}_0\tau^{-1}[\w|_{\Gamma_1}]+\tau\mathcal{E}_1\tau^{-1}[\w_2] \In Y_1,
+    \end{aligned}
+    \right.\qquad   
+    q = c+\left\{\begin{aligned}
+            \mathcal{A}_0[\w_0]+\mathcal{A}_1[\w|_{\Gamma_1}] \In Y_0,\\
+            \tau\mathcal{A}_0\tau^{-1}[\w|_{\Gamma_1}]+\tau\mathcal{A}_1\tau^{-1}[\w_2] + \delta
+            Q[\w_0,\w_2] \In Y_1,
+    \end{aligned}
+    \right.
+    \] 
+    Moreover, we have the identity  
+    \begin{equation}
+    \label{eqn:xvsp4}
+    \delta Q[\w_0,\w_2]\e_1 = \tau\mathcal{T}^{00}\tau^{-1}[\w_{|\Gamma_1}] +\tau
+    \mathcal{T}^{01}\tau^{-1}[\w_2] -
+    \mathcal{T}^{10}[\w_0]-\mathcal{T}^{11}[\w_{|\Gamma_1}] \On \Gamma_1.
+    \end{equation}
+    Finally, we denote by $\delta Q_0$ and $\delta Q_2$ the operators   
+    \begin{equation}
+    \label{eqn:6zplh}
+        \delta Q_0[\w_0]:=\delta Q[\w_0,0], \qquad \delta Q_2[\w_2]:=\delta
+        Q[0,\w_2],
+    \end{equation}
+    such that by construction, $\delta Q[\w_0,\w_2]=\delta Q_0[\w_0]+\delta
+    Q_2[\w_2]$.
+\end{definition}
+\begin{proof}
+The last identity is just the the continuity of the normal flux:
 \[
-    \mathcal{T}^{10}+\mathcal{T}^{11} \tau \mathcal{P} -
-    \tau\mathcal{T}^{00}\mathcal{P}-\tau\mathcal{T}^{01}\tau\mathcal{P}^{2}=(c_0-c_1)\e_1,
+    \begin{aligned}
+        \sigma(\mathcal{E}_0[\w_0],\mathcal{A}_0[\w_0])\e_1& +\sigma(\mathcal{E}_1[\w|_{\Gamma_1}],\mathcal{A}_1[\w|_{\Gamma_1}])\e_1   
+     \\ 
+     &=
+    \tau\sigma(\mathcal{E}_0[\tau^{-1}[\w|_{\Gamma_1}]],\mathcal{A}_0[\tau^{-1}\w|_{\Gamma_1}])\e_1+\tau\sigma(\mathcal{E}_1[\tau^{-1}  
+    \w_{2}],\mathcal{A}_1[\tau^{-1}\w_{2}])\e_1 \\    
+    & \quad-\delta Q[\w_0,\w_2] \e_1 \On \Gamma_1.
+    \end{aligned}
 \] 
-which can be rewritten as   
+\end{proof}
+\begin{remark}
+The derivation of the Ricatti equation for the operator $\mathcal{P}$ with the
+standard method of \cite{fliss_dirichlet--neumann_2013} does not work
+straightforwardly because it creates a term depending on $\delta Q[\w_0,\w_2]$. 
+    During our discussion at ENSTA, we considered 
+$\z\in H^{1}(Y_1\cup Y_2)$ be any function satisfying   
 \[
-    \mathcal{R}^{10}+(\mathcal{R}^{11}+
-    \mathcal{R}^{00})\mathcal{P}+\mathcal{R}^{01}\mathcal{P}^{2}=(c_0-c_1)\e_1, 
-\]  
-with 
+    \div(\z) &= \left\{\begin{aligned}
+            -1 & \In Y_0,\\ 
+            1 & \In Y_1,
+    \end{aligned}
+\right.\qquad \z =0\On \partial (Y_0\cup Y_1).
+\]
+Due to the condition $\int_{Y_0}\mathcal{A}_0[\w]\D x =0$ for any $\w\in\dotH$, it is
+readily seen that   
 \[
-\mathcal{R}^{10}:=\tau^{-1}\mathcal{T}^{10}, \quad     
-    \mathcal{R}^{11}:=\tau^{-1}\mathcal{T}^{11}\tau, \quad  
-    \mathcal{R}^{00}:=-\mathcal{T}^{00}, \quad  
-    \mathcal{R}^{01}:=-\mathcal{T}^{01}\tau,
+    \int_{Y_0}\nabla \mathcal{E}_i[\pphi]\cdot \nabla\z\D x =
+    \int_{\Gamma_1}\sigma(\mathcal{E}_i[\pphi],\mathcal{A}_i[\pphi])\e_1\cdot\z\D
+    \sigma=\int_{\Gamma_1} \mathcal{T}^{1i}[\pphi]\cdot\z\D \sigma,
 \] 
-where all these operators maps $\dotH $ to $\dotH$.
-We now need to identify the constant $c_0-c_1$.
-%Due to
-%\cref{eqn:o0rih}, it holds  
-%\[
-%
-%\] 
+\[
+    \int_{Y_1}\nabla (\tau\mathcal{E}_i[\pphi])\cdot \nabla\z\D x =
+    -\int_{\Gamma_1}\tau\sigma(\mathcal{E}_i[\pphi],\mathcal{A}_i[\pphi])\e_1\cdot\z\D
+    \sigma=-\int_{\Gamma_1} \tau\mathcal{T}^{0i}[\pphi]\cdot\z\D \sigma.
+\] 
+Multiplying the first equation of \cref{eqn:c3i38} by $\z$ and integrating by parts,
+we then found    that the pressure difference is given by 
+\[
+    \begin{aligned}
+    \delta \mathcal{Q}[\w_0,\w_2]  & = \int_{Y_0\cup Y_1} q\div(\z)\D x 
+      =  
+    \int_{Y_0\cup Y_1}\nabla \w\cdot\nabla \z\D x    
+    \\
+     & =\int_{Y_0} (\nabla \mathcal{E}_0[\w_0]+ \nabla\mathcal{E}_1[\w|_{\Gamma_1}])\cdot \nabla \z   
+     +\int_{Y_1}\nabla(\tau\mathcal{E}_0\tau^{-1}[\w|_{\Gamma_1}]+\tau
+     \mathcal{E}_1\tau^{-1}[\w_2])\cdot\nabla\z\D x\\    
+     &= \int_{\Gamma_1} (\mathcal{T}^{10}[\w_0]+\mathcal{T}^{11}[\w|_{\Gamma_1}])\cdot\z\D
+     \sigma -\int_{\Gamma_1}(\tau\mathcal{T}^{00}\tau^{-1}[\w|_{\Gamma_1}] +
+     \tau\mathcal{T}^{01}\tau^{-1}[\w_2])\cdot\z\D x.   
+    \end{aligned}
+\] 
+Inserting these expression, we could thus replace $\delta Q[\w_0,\w_2]$ by a linear
+functional in $\w_0$, $\w_{|\Gamma_1}$ and $\w_2$ in \cref{eqn:xvsp4} to read a
+Ricatti equation for $\mathcal{P}$. In fact, this computation is just a consequence
+of  
+\[
+\int_{\Gamma_1}\e_1 \cdot\z \D \sigma = \int_{\partial Y_0}\n\cdot\z\D \sigma =
+\int_{Y_0}\div(\z)\D x= -1.
+\] 
+Therefore, a more straightfoward manner to rewrite $\delta Q[\w_0,\w_2]$ is to
+integrate \cref{eqn:xvsp4} against $\e_1$, which yields the next lemma.
+\end{remark}
+\begin{lemma}
+    The traces $\w_0$, $\w_1$ and $\w_2$ are related by the formula     
+    \begin{equation}
+    \label{eqn:ible6}
+        -\Pi\mathcal{T}^{10}[\w_0]+(\Pi\tau\mathcal{T}^{00}\tau^{-1}-\Pi\mathcal{T}^{11})[\w|_{\Gamma_1}]+\Pi\tau\mathcal{T}^{01}\tau^{-1}[\w_2]=0,
+    \end{equation}
+    where   $ \Pi$ is the projection operator 
+    \[
+        \Pi[\pphi]:= \pphi-\left(\int_{\Gamma_1}\pphi\cdot\e_1\D \sigma\right)\e_1.
+    \] 
+\end{lemma}
+\begin{proof}
+    Multiplying \cref{eqn:xvsp4} by $\e_1$ and integrating on $\Gamma_1$, we read   
+    \[
+        \delta Q[\w_0,\w_2] = \int_{\Gamma_1}\left( \tau
+        \mathcal{T}^{00}\tau^{-1}[\w|_{\Gamma_1}]-\mathcal{T}^{11}[\w|_{\Gamma_1}]+\tau
+    \mathcal{T}^{01}\tau^{-1}[\w_2]-\mathcal{T}^{10}[\w_0] \right)\cdot\e_1\D \sigma
+    \] 
+\end{proof}
+   \begin{remark}
+    I think we should be able to prove that $\Pi\tau
+    \mathcal{T}^{00}\tau^{-1}-\Pi\mathcal{T}^{11}$ is an invertible operator as the
+    sum of two symmetric positive definite operators. 
+   \end{remark} 
+   \begin{corollary}
+       The propagator operator $\mathcal{P}$ solves the following Ricatti equation.     
+       \begin{equation}
+       \label{eqn:1p64i}
+        -\Pi\tau^{-1}\mathcal{T}^{10}+(\Pi\mathcal{T}^{00}-\Pi\tau^{-1}\mathcal{T}^{11}\tau)\mathcal{P}+\Pi\mathcal{T}^{01}\tau\mathcal{P}^{2}=0,
+       \end{equation}
+   $\mathcal{P}$ is the unique operator with
+   spectral radius $\sigma<1$ solving the Ricatti equation \cref{eqn:1p64i}.
+   \end{corollary}
+   \begin{proof}
+       If $\mathcal{P}$ is given, taking $\w_2:=\tau^{2}\mathcal{P}^{2}$ implies
+       $\w|_{\Gamma_1}=\mathcal{P}[\w_0]$. Then, \cref{eqn:ible6} with arbitrary
+       $\w_0\in\dotH$ implies
+       \cref{eqn:1p64i}, noting that $\Pi$ et $\tau$ commute. Reciprocally, if
+       $\mathcal{P}$ is such an operator, we define a solution $(\v,q)\in
+       H^{1}(\mathcal{B}_+,\R^{d})\times L^{2}(\mathcal{B}_+)/\R$ by setting    
+       \begin{equation}
+       \label{eqn:pr9ux}
+           \left\{\begin{aligned}
+           \v & =
+           \mathcal{E}_0[\mathcal{P}^{k}[\w_0]]+\mathcal{E}_1[\tau\mathcal{P}^{k+1}[\w_0]],\\
+q     & =\mathcal{A}_0[\mathcal{P}^{k}[\w_0]]+\mathcal{A}_1[\tau\mathcal{P}^{k+1}[\w_0]]+\sum_{i=0}^{k-1}
+           \delta Q[\mathcal{P}^{i}[\w_0],\tau^{2}\mathcal{P}^{i+2}[\w_0]]+c,
+           \end{aligned}
+           \right.\qquad  \In Y_k.
+       \end{equation}
+       for some constant $c\in\R$. 
+       By construction of $\mathcal{P}$, $(\w,q)\in H^{1}(\mathcal{B}_+,\R^{d})\times
+       L^{2}(\mathcal{B}_+)/\R$ is the solution to the semi-strip
+       problem with Dirichlet datum $\w_0$. Since $\v|_{\Gamma_1}=\mathcal{P}[\w_0]$,
+       it follows that $\mathcal{P}$ is the propagation operator.
+   \end{proof}
+   We conclude this section by noting that the representation \cref{eqn:pr9ux} gives
+   a mean to compute boundary layer tails for the pressure.     
+   \begin{proposition}
+       The constant $c$ in the representation \cref{eqn:pr9ux} so that 
+   \[
+   q(x_1,x')\rightarrow 0 \text{ as }x_1\rightarrow +\infty. 
+   \] 
+   is given explicitly by 
+   \[
+   c=-\big(\delta Q_0 (I-\mathcal{P})^{-1} +\delta Q_2\tau^{2}(I-\mathcal{P})^{-1}
+      \mathcal{P}^{2}\big)[\w_0]
+   \] 
+   where we recall the definition \cref{eqn:6zplh} of the operators $\delta Q_0$ et
+   $\delta Q_2$.
+   \end{proposition}    
+   \begin{proof}
+  Since $\mathcal{P}$ has spectral radius $\sigma<1$, the terms
+  $\mathcal{A}_0[\mathcal{P}^{k}[\w_0]]$ and $\mathcal{A}_1[\tau
+  \mathcal{P}^{k+1}[\w_0]]$ decay geometrically. We have therefore  
+  \[
+      \begin{aligned}
+      c & =-\sum_{i=0}^{+\infty}\delta
+      Q[\mathcal{P}^{i}[\w_0],\tau^{2}\mathcal{P}^{i+2}[\w_0]]  
+      = -\sum_{i=0}^{+\infty} (\delta Q_0 \mathcal{P}^{i} +\delta Q_2
+      \tau^{2}\mathcal{P}^{i+2})[\w_0]\\    
+      &=-\big(\delta Q_0 (I-\mathcal{P})^{-1} +\delta Q_2\tau^{2}(I-\mathcal{P})^{-1}
+      \mathcal{P}^{2}\big)[\w_0].
+      \end{aligned}
+  \] 
+   \end{proof}    
+\subsection{Alternative derivation of a Ricatti equation}
+Inspired by the methodology of the previous section, we obtain the intuition that
+a simpler scheme might exist to derive a Ricatti equation characterizing the
+propagation operator $\mathcal{P}$. Let us consider the operator
+$\mathcal{V}[\w_0,\w_2]$ defined for $\w_0\in \dotH$ and $\w_2\in \dot
+H^{\frac{1}{2}}(\Gamma_2,\R^{d})$ by    
+\begin{equation}
+\label{eqn:88eqm}   
+\mathcal{V}[\w_0,\w_2]=\w,
+\end{equation}  
+where $(\w,q)\in H^{1}(Y_0\cup Y_1,\R^{d})\times L^{2}(Y_0\cup Y_1)/\R$ is the unique solution to \cref{eqn:c3i38}. 
+By using the linearity, we may also define $\mathcal{V}_0$ and $\mathcal{V}_2$ the operators such that  
+\[
+    \mathcal{V}[\w_0,\w_2]=\mathcal{V}_0[\w_0]+\mathcal{V}_2[\w_2],
+\]
+namely  
+\[
+    \mathcal{V}_0[\w_0]:=\mathcal{V}[\w_0,0],\qquad
+    \mathcal{V}_2[\w_2]:=\mathcal{V}[0,\w_2].
+\] 
+Then, we must obviously have    
+\[
+    \mathcal{V}[\w_0,\tau^{2}\mathcal{P}^{2}[\w_0]]=\tau\mathcal{P} [\w_0] \On \Gamma_1,
+\] 
+namely  
+\[
+\tau^{-1}\gamma\mathcal{V}_0-\mathcal{P}+\tau^{-1}\gamma\mathcal{V}_2\tau^{2} \mathcal{P}^{2}=0.
+\] 
+where $\gamma$ is the trace operator on $\Gamma_1$.
 \bibliography{references,fliss_feppon}
 \bibliographystyle{acm}
 \end{document}
