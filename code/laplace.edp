@@ -1,0 +1,44 @@
+IMPORT "io.edp"
+    
+IMPORT "ddm.edp"
+
+load "PETSc"                        // PETSc plugin
+macro dimension()2// EOM            // 2D or 3D
+include "macro_ddm.idp"             // additional DDM functions
+
+if(!mpirank)
+    mesh Th=importMesh("Th");   
+broadcast(processor(0), Th); 
+
+int[int] labPeriodic = [1,3]; 
+
+fespace Fh1(Th, P1);  
+Mat A; 
+createMat(Th, A, P1); 
+
+macro grad(u) [dx(u),dy(u)]// 
+varf laplace(u,v)=int2d(Th)(grad(u)'*grad(v))      
+                   +on(1,2,3,4,u=0)   
+                   +on(10,u=0); 
+A = laplace(Fh1,Fh1,tgv=-1); 
+    
+matrix rhs2 = importMatrix("rhs2"); 
+    
+real[int,int] RHS2(rhs2.n, rhs2.m); 
+    
+macro matrixToIntInt(mat,intint) 
+    for[I,J,C : mat] intint(I,J) = C;   
+    //EOM   
+
+matrixToIntInt(rhs2, RHS2); 
+
+real[int,int] rhs(Fh1.ndof, rhs2.m), sol(Fh1.ndof,rhs2.m); 
+real[int,int] B(A.n,rhs2.m), X(A.n,rhs2.m); 
+ChangeNumbering(A, RHS2, B); 
+set(A, sparams = "-ksp_type preonly -pc_type lu -ksp_monitor -ksp_view -pc_mat_solver_type mumps");
+KSPSolve(A,B,X); 
+ChangeNumbering(A, sol, X, inverse = true, exchange = true);
+    
+matrix SOL = sol;     
+exportMatrix(SOL); 
+    
