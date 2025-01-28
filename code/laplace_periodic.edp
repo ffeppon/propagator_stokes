@@ -1,8 +1,6 @@
 IMPORT "io.edp"
     
 IMPORT "ddm.edp"
-    
-DEFAULT (bc,"Dirichlet")
 
 load "PETSc"                        // PETSc plugin
 macro dimension()2// EOM            // 2D or 3D
@@ -12,18 +10,19 @@ if(!mpirank)
     mesh Th=importMesh("Th");   
 broadcast(processor(0), Th); 
 
-fespace Fh1(Th, P1);  
+int[int] labPeriodic = [1,3]; 
+
+macro P1per() P1, periodic=[[1,x],[3,x]]//
+fespace Fh1per(Th, P1per);  
+
 Mat A; 
-createMat(Th, A, P1); 
+createMat(Th, A, P1per); 
 
 macro grad(u) [dx(u),dy(u)]// 
 varf laplace(u,v)=int2d(Th)(grad(u)'*grad(v))      
                    +on(2,4,u=0)   
-IFEQ (bc,"Dirichlet")   
-                    +on(1,3,u=0)
-ENDIF
                    +on(10,u=0); 
-A = laplace(Fh1,Fh1,tgv=-1); 
+A = laplace(Fh1per,Fh1per,tgv=-1); 
     
 matrix rhs2 = importMatrix("rhs2"); 
     
@@ -35,7 +34,7 @@ macro matrixToIntInt(mat,intint)
 
 matrixToIntInt(rhs2, RHS2); 
 
-real[int,int] rhs(Fh1.ndof, rhs2.m), sol(Fh1.ndof,rhs2.m); 
+real[int,int] rhs(Fh1per.ndof, rhs2.m), sol(Fh1per.ndof,rhs2.m); 
 real[int,int] B(A.n,rhs2.m), X(A.n,rhs2.m); 
 ChangeNumbering(A, RHS2, B); 
 set(A, sparams = "-ksp_type preonly -pc_type lu -ksp_monitor -ksp_view -pc_mat_solver_type mumps");

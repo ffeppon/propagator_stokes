@@ -1,153 +1,126 @@
 import numpy as np
 from pymedit import P1Function, mmg2d, trunc
-import scipy.signal as sg
 import scipy.sparse as sp
 from pyfreefem import FreeFemRunner 
-from utils import parseSysArgs, get_root
+from utils import parseSysArgs, get_root, argDocString
+import matplotlib.pyplot as plt     
     
+from lib import generateStrip, verticesOnBoundary, set_debug
+    
+plt.ion()
+    
+# Verbosity tuning
+debug = 5   
 args = parseSysArgs()
-ff_verbosity = int(args['-v'][0]) if '-v' in args else -1
-ncpu = int(args['-np'][0]) if '-np' in args else 1
-wg = '-wg' in args
+ff_verbosity = int(args['-v'][0]) if '-v' in args else 0
+set_debug(debug)
+    
+def get_propagator(N, shape, bc="Dirichlet"):
+    """ bc: Neumann ou Dirichlet sur les parois de la bande """
 
-debug = 5
-sawtooth = lambda x :  sg.sawtooth(2*np.pi*(x))/2+0.5
+    doubleCell, _ = generateStrip(2,N, shape=shape)
 
-def hyperplane(A,B):    
-    xA = A[0]   
-    yA = A[1]   
-    xB = B[0]   
-    yB = B[1]   
+    # Rhs2: right boundary
+    # Rhs4: left boundary
+    def getBoundaryOperator(bdNum):
+        bd2 = verticesOnBoundary(doubleCell, bdNum) 
+        rhs2 = sp.csr_matrix(([1]*len(bd2),(bd2,range(len(bd2)))),shape=(doubleCell.nv,len(bd2)))
+            
+        script = "laplace.edp"
+        runner = FreeFemRunner(get_root()+"/"+script,{'bc':bc},     
+                               run_dir="run",debug=debug)
+        runner.import_variables(Th=doubleCell,rhs2=rhs2)
+        #A = runner.execute()['A']
+        V2 = runner.execute(with_mpi=True,verbosity=ff_verbosity)['SOL']
+        return V2
         
-    a = yA-yB  
-    b = xB-xA  
-    return lambda x : (x[0]-xA)*a+(x[1]-yA)*b
+    V2 = getBoundaryOperator(2)
+    V0 = getBoundaryOperator(4)
+    
+    # Restriction on middle boundary    
+    V2r = V2[verticesOnBoundary(doubleCell, 5),:].todense()
+    V0r = V0[verticesOnBoundary(doubleCell, 5),:].todense()
 
-def generateHole(N, shape="disk"):
-    code = """  
-    IMPORT "io.edp" 
+    # Fixed point scheme    
+    P = np.zeros_like(V2r)
         
-    mesh Th=square($N,$N, [x,y], flags=1);  
-    exportMesh(Th);     
-    """
-    Th = FreeFemRunner(code).execute(config={'N':N},debug=debug)['Th']
-    Th.debug = debug
+    residual = 1
+    i = 0 
+    while residual > 1e-20:
+        Pnew = V0r+V2r@P@P    
+        residual = np.linalg.norm(Pnew-P,np.inf)
+        print("Residual = "+str(residual))
+        P = Pnew
+        i += 1
+            
+    print("Fixed point iteration converged in "+str(i)+" iterations !")
         
-    if shape=="disk":
-        phi = lambda x : np.sqrt((x[0]-0.5)**2+(x[1]-0.5)**2)-0.25
-    elif shape=="triangle": 
-        A = [0.3,0.2]  
-        B = [0.7, 0.4]
-        C = [0.4,0.7]
-        phi = lambda x : max(hyperplane(B,A)(x),
-                             hyperplane(C,B)(x),
-                             hyperplane(A,C)(x))
-    elif shape=="ellipse":  
-        def phi(x): 
-            theta= np.pi/3
-            xR = np.cos(theta)*(x[0]-0.5)-np.sin(theta)*(x[1]-0.5)
-            yR = np.sin(theta)*(x[0]-0.5)+np.cos(theta)*(x[1]-0.5)
-            return xR**2/0.3**2+yR**2/0.1**2-1
-    elif shape=="square":   
-        phi = lambda x : max(np.abs(x[0]-0.5)-0.2,np.abs(x[1]-0.5)-0.2)
-    elif shape=="duct": 
-        bump = lambda x : np.cosh(3.2*x)/np.cosh(np.pi/2*np.sinh(3.2*x))**2 
-        phi = lambda x : -max(x[1]-(0.81-0.3*bump(3*(0.7-sawtooth(x[0])))) 
-                             ,-x[1]+(0.21+0.3*bump(3*(sawtooth(x[0])-0.3))))
-    elif shape=="disks":    
-        phi = lambda x : min(np.sqrt((x[0]-0.3)**2+(x[1]-0.5)**2)-0.1,    
-                             np.sqrt((x[0]-0.7)**2+(x[1]-0.3)**2)-0.1,    
-                             np.sqrt((x[0]-0.7)**2+(x[1]-0.7)**2)-0.1)
-    elif shape=="crescents":    
-        A = [0.2,0.5]   
-        C = [0.8,0.8]   
-        B = [0.8,0.2]
-        p = 2
-        phi = lambda x : max(0.2-x[0],hyperplane(C,B)(x),  
-                             A[1]-x[1]+(x[0]-A[0])**p/(B[0]-A[0])**p*(B[1]-A[1]),
-                             -A[1]+x[1]-(x[0]-A[0])**p/(C[0]-A[0])**p*(C[1]-A[1]))
+    return P, doubleCell, V0, V2
+    
+def get_modes(P):
+    # Diagonalize P and sort eigenvalues according to the real part
+    eigenvalues, eigenvectors = np.linalg.eig(P)
+    order = np.argsort(np.real(eigenvalues))[::-1]
+    eigenvalues = eigenvalues[order]    
+    eigenvectors = eigenvectors[:,order]
+    return eigenvalues, eigenvectors
+    
+def plot_eigenvector(doubleCell, P, V0, V2, eigenvectors, eigenvalues, i):
+    mode = np.array(V2 @ P @ P @ eigenvectors[:,i] + V0 @ eigenvectors[:,i]).flatten()
+    lamb = np.log(eigenvalues[i])
+    exp = P1Function(doubleCell, lambda x : np.exp(lamb*x[0]))
+    mode /= exp.sol
+    P1Function(doubleCell, mode).plot()
 
+
+def plot_eigenvectors(doubleCell, P, V0, V2, eigenvectors, eigenvalues):
+    fig, ax = plt.subplots(2,3, figsize=(16,8)) 
+    for i in range(6):    
+        row, col = divmod(i, 3) 
+        mode = np.array(V2 @ P @ P @ eigenvectors[:,i] + V0 @ eigenvectors[:,i]).flatten()
+        lamb = np.log(eigenvalues[i])
+        exp = P1Function(doubleCell, lambda x : np.exp(lamb*x[0]))
+        mode /= exp.sol
+        P1Function(doubleCell, mode) \
+            .plot(fig=fig, ax=ax[row,col],title="Mode "+str(i) + " lambda="+format(np.log(eigenvalues[i]),".2f"))
+
+    plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, wspace=0.5, hspace=0.6)
+
+def plot_solution(doubleCell, P, V0, V2, x0):
+    # Solution to the infinite strip problem with u0 = 1
+    fig, ax = plt.subplots(2,2, figsize=(16,8)) 
+    sol1 = np.asarray(V0 @ x0 + V2 @ P @ P @ x0 )
+    P1Function(doubleCell, sol1).plot(fig= fig, ax=ax[0,0], title="Solution for u=1 on left boundary")
+    sol2 = np.asarray(V0 @ x0 )
+    P1Function(doubleCell, sol2).plot(fig= fig, ax=ax[0,1], title="Solution for u=1 on left boundary and u=0 on right")
+    diff = sol1 - sol2
+    P1Function(doubleCell, diff).plot(fig= fig, ax=ax[1,0], title="Difference")
+
+if __name__=="__main__":
+    parser = argDocString("Compute the propagator operator in a neumann perforated "   
+                          "strip for the Laplace and Stokes problems")
+    parser.addArg("-shape","Shape (available: disk, triangle, duct, ellipse, "  
+                           "square, duct, crescents)", meta="SHAPE",    
+                  default="disk")
+    parser.addArg("-N","Resolution","N", default=40)
+    parser.addArg("-neumann","Use Neumann boundary conditions on the strip instead of Dirichlet")
+    args = parser.parseSysArgs()
+
+    N = args['-N']
+    if "-neumann" in args:  
+        bc = "Neumann"  
     else:   
-        raise Exception("Error: shape unknown (disk|triangle)")
-    phiP1 = P1Function(Th,phi)
+        bc = "Dirichlet"
+    P, doubleCell, V0, V2 = get_propagator(N, args['-shape'],bc)
         
-    hmin = 0.9/N
-    hmax = 1.1/N
-    hgrad = 1.3 
-    hausd = 0.1*hmin
-    paramsMMg = f""" 
-    Parameters
-    1
-     
-    10 Edges {hmin} {hmax} {hausd}
-    """
+    eigenvalues, eigenvectors = get_modes(P)
         
-    M = mmg2d(Th, hmin, hmax, hgrad, hausd, params=paramsMMg, nr=False, sol=phiP1,  
-                          ls=True, extra_args="-nosurf")
-    M.requiredEdges = np.where(np.isin(M.edges[:, -1], [1, 2, 3, 4]))[0]+1
-    M.nre = len(M.requiredEdges)
+    plot_eigenvectors(doubleCell, P, V0, V2, eigenvectors, eigenvalues)
 
-    M = mmg2d(M, hmin, hmax, hgrad, hausd, params=paramsMMg, nr=False)
+    x0 = np.real(eigenvectors[:,0])
+    x0 = np.ones_like(eigenvectors[:,0])
+    plot_solution(doubleCell, P, V0, V2, x0)
+    import ipdb 
+    ipdb.set_trace()
 
-    if shape!="duct":
-        M = trunc(M, 2)
-    return M
-
-def generateStrip(K, N, shape="disk"):
-    Th = generateHole(N, shape)
-    codeFreeFem=""" 
-    IMPORT "io.edp"     
-        
-    mesh Th = importMesh("Th");     
-    mesh Th2;   
-    mesh Th3=Th; 
-    for(int i = 1; i<$K; i++){
-    Th2 = movemesh(Th,[x+i,y]);    
-    Th3 = Th3+Th2;  
-    }
-
-    exportMesh(Th3); 
-    """
-    runner = FreeFemRunner(codeFreeFem,config={'K':K},debug=1)   
-    runner.import_variables(Th=Th)  
-    Th3=runner.execute(verbosity=ff_verbosity)['Th3']
-        
-    #Now remove internal spurious edges numbering 
-    edgesTh3 = np.where(Th3.edges[:,-1]==2)[0]
-    adjacentTris = [Th3.elemToTri(e) for e in Th3.edges[edgesTh3][:,:-1]]
-    internalEdges = np.where(np.asarray([len(e) for e in adjacentTris])==2)[0]
-
-    Th3.edges[edgesTh3[internalEdges],-1]=5   
-    Th3._AbstractMesh__updateBoundaries()
-    #Th3.N = K
-
-    return Th3, Th
-    
-doubleCell, cell = generateStrip(2,30, shape="disk")
-
-def verticesOnBoundary(num):
-    bd2 = np.unique(doubleCell.verticesToEdges[:,doubleCell.Boundaries[num]].tocoo().row)
-    order = np.argsort(doubleCell.vertices[bd2,1]) #Order vertices by y coordinate  
-    return bd2[order]
-# Rhs2: right boundary
-# Rhs4: left boundary
-def getBoundaryOperator(bdNum):
-    bd2 = verticesOnBoundary(bdNum) 
-    rhs2 = sp.csr_matrix(([1]*len(bd2),(bd2,range(len(bd2)))),shape=(doubleCell.nv,len(bd2)))
-        
-    runner = FreeFemRunner(get_root()+"/laplace.edp",debug=debug)
-    runner.import_variables(Th=doubleCell,rhs2=rhs2)
-    #A = runner.execute()['A']
-    V2 = runner.execute(with_mpi=True)['SOL']
-    return V2
-    
-V2 = getBoundaryOperator(2)
-V0 = getBoundaryOperator(4)
-    
-P1Function(doubleCell, V2 @ np.ones(len(verticesOnBoundary(2)))).plot(title="Right boundary")
-P1Function(doubleCell, V0 @ np.ones(len(verticesOnBoundary(4)))).plot(title="Left boundary")
-
-# Restriction on middle boundary    
-V2 = V2[verticesOnBoundary(5),:]
-V0 = V0[verticesOnBoundary(5),:]
-
+    input("Press any key")

@@ -180,7 +180,7 @@ following Stokes problem:
         -\Delta \v+\nabla q& = 0\In \mathcal{B}_+,\\    
         \div(\v) &= 0 \In \mathcal{B}_+,\\  
         \v& = 0 \On \partial \mathcal{B}_+\backslash \Gamma_0,\\    
-        \v &= \v_0.
+        \v &= \v_0 \On \Gamma_0.
 \end{aligned}
 \right.
 \end{equation}
@@ -641,10 +641,272 @@ Then, we must obviously have
     \mathcal{V}[\w_0,\tau^{2}\mathcal{P}^{2}[\w_0]]=\tau\mathcal{P} [\w_0] \On \Gamma_1,
 \] 
 namely  
-\[
+\begin{equation}
+\label{eqn:0hn7g}
 \tau^{-1}\gamma\mathcal{V}_0-\mathcal{P}+\tau^{-1}\gamma\mathcal{V}_2\tau^{2} \mathcal{P}^{2}=0.
-\] 
+\end{equation}
 where $\gamma$ is the trace operator on $\Gamma_1$.
+\section{Numerical results} 
+\subsection{Laplace equation}   
+Let us first consider the computation of solutions for the Laplace equation in
+perforated semi-strip problems, namely  given $u_0\in
+H^{\frac{1}{2}}(\Gamma_0)$,    
+find $u\in H^{1}(\mathcal{B}_+)$ such that
+\begin{equation}
+\label{eqn:q7aj0}   
+\left\{\begin{aligned}
+        -\Delta u &= 0 \In \mathcal{B}_+,\\ 
+        u &= u_0 \On \Gamma_0.
+\end{aligned}
+\right.
+\end{equation}
+For an illustrative purpose, we consider either Neumann or Dirichlet boundary
+conditions on the top and bottom boundaries:    
+\begin{equation}
+\label{eqn:4cxg3}
+        u = 0 \On \partial \mathcal{B}_+\backslash \Gamma_0 \text{ (Dirichlet)},
+\end{equation}
+\begin{equation}
+\label{eqn:4e0hf}
+    \partialn{u} = 0 \On \partial \mathcal{B}_+\backslash \Gamma_0 \text{ (Neumann)}.
+\end{equation}
+When considering Dirichlet boundary conditions, $u_0$ should be in
+$H^{\frac{1}{2}}_{00}(\Gamma_0)$. We shall verify the slower exponential decays in case of
+Neumann boundary conditions on the top and bottom wall. 
+    
+\medskip    
+
+We consider the following fixed point scheme to compute the operator $\mathcal{P}$
+based on \cref{eqn:0hn7g}:  
+\begin{equation}
+\label{eqn:08maf}
+\mathcal{P}_{k+1}=\tau^{-1}\gamma \mathcal{V}_0+\tau^{-1}\gamma
+\mathcal{V}_2\tau^{2}\mathcal{P}_k^{2}, \qquad k=0,1,2,\dots.
+\end{equation}
+{\color{blue} This needs a proof,} but we may expect the mapping
+$f(\mathcal{P}):=\tau^{-1}\gamma \mathcal{V}_0+\tau^{-1}\gamma
+\mathcal{V}_2\tau^{2}\mathcal{P}^{2}$ to be a contraction in a neighborhood of zero.
+Indeed,     very heuristically and assuming $\mathcal{P}_1$ and $\mathcal{P}_2$
+commute, 
+\[
+f(\mathcal{P}_1)-f(\mathcal{P}_2)=\tau^{-1}\gamma
+\mathcal{V}_2\tau^{2}(\mathcal{P}_1^{2}-\mathcal{P}_2^{2}) = \tau^{-1}\gamma
+\mathcal{V}_2\tau^{2}(\mathcal{P}_1+\mathcal{P}_2)(\mathcal{P}_1-\mathcal{P}_2).
+\] 
+Therefore, the Lipschitz constant of $f$ is bounded by the norms of the operator
+$\tau^{-1}\gamma\mathcal{V}_2$ multiplied by a small value for $\mathcal{P}_1+\mathcal{P}_2$. Due to
+the decay of the solution in the double cell, it can be expected that $|||\tau^{-1}\gamma
+\mathcal{V}_2|||<1$.
+    
+\medskip    
+
+In practice, the scheme \cref{eqn:08maf} seems to work well, returning the unique
+solution to \cref{eqn:0hn7g} of spectral radius smaller than one. The examples tested   
+reuqired only 4 to 12 
+iterations to reach convergence on the example tested. 
+    
+\bigskip    
+
+In the next \cref{fig:disk_Dirichlet} to \cref{fig:disks_Neumann}, we plot the Floquet modes
+associated to the boundary layers for the Laplace semi-strip problems
+\cref{eqn:q7aj0} with Dirichlet and Neumann boundary conditions
+\cref{eqn:4cxg3,eqn:4e0hf} on the top and bottom walls. We consider different types
+of geometries: a disk, a triangle, a group of disks.  For each case, we do the
+following operations:   
+\begin{enumerate}
+    \item we compute the operator $\mathcal{V}_0$ and $\mathcal{V}_2$ by solving
+        Laplace problems in the double cell with multiple right-hand sides;     
+    \item we compute the operator $\mathcal{P}$ by iterating \cref{eqn:08maf};  
+    \item we diagonalize the operator $\mathcal{P}$ (a dense matrix) using the NumPy
+        function \texttt{eigs}. We order the eigenvalues $(\mu_k)_{k\in\N}$ 
+        according to their real parts. {\color{blue} Strikingly, we observe that the
+        eigenvalues of $\mathcal{P}$ are always real (although $\mathcal{P}$ is a
+        priori not
+    a symmetric operator)!} We denote by $(\phi_k)_{k\in\N}$ the corresponding
+    eigenvectors.
+    \item We define the Floquet multipliers   $(\lambda_k)_{k\in\N}$  and Floquet
+        modes $(u_k)_{k\in\N}$ by
+        \[
+        \lambda_k := \log(\mu_k); \qquad    
+        u_k(x_1,x'):=
+        (\mathcal{V}_0[\phi_k](x_1,x')+\mathcal{V}_2[\mathcal{P}^{2}\phi_k](x_1,x'))e^{-\lambda_k
+        x_1}.
+        \] 
+        With these definitions, we expect asymptotic expansions (assuming
+        $\mathcal{P}$ has only eigenvalues of multiplicity one)         
+        \[
+        u(x)=\sum_{k=0}^{+\infty} c_k e^{\lambda_k x_1}u_k(x_1,x'), \qquad \text{ if
+        }u_0(x)=\sum_{k=0}^{+\infty}c_k \phi_k.
+        \]  
+        Since by construction $e^{\lambda_k}=\mu_k$ are the eigenvalues of
+        $\mathcal{P}$, the modes $u_k(x_1,x')$ are periodic, which is verified on
+        \cref{fig:disk_Dirichlet} to \cref{fig:disks_Neumann}. 
+\end{enumerate}
+    
+    
+    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Dirichlet_0.png}   
+            \caption{$\lambda_{0}=-5.31}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Dirichlet_1.png}   
+            \caption{$\lambda_{1}=-6.69}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Dirichlet_2.png}   
+            \caption{$\lambda_{2}=-11.6}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Dirichlet_3.png}   
+            \caption{$\lambda_{3}=-13.4}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Dirichlet_4.png}   
+            \caption{$\lambda_{4}=-18.2}
+\end{subfigure}\quad             
+        \caption{Modes for a disk with Dirichlet boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:disk_Dirichlet}
+        \end{figure}    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Neumann_0.png}   
+            \caption{$\lambda_{0}=-2.50}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Neumann_1.png}   
+            \caption{$\lambda_{1}=-3.34}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Neumann_2.png}   
+            \caption{$\lambda_{2}=-8.40}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Neumann_3.png}   
+            \caption{$\lambda_{3}=-10.0}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disk_Neumann_4.png}   
+            \caption{$\lambda_{4}=-14.9}
+\end{subfigure}\quad             
+        \caption{Modes for a disk with Neumann boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:disk_Neumann}
+        \end{figure}    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Dirichlet_0.png}   
+            \caption{$\lambda_{0}=-6.77}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Dirichlet_1.png}   
+            \caption{$\lambda_{1}=-9.28}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Dirichlet_2.png}   
+            \caption{$\lambda_{2}=-13.7}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Dirichlet_3.png}   
+            \caption{$\lambda_{3}=-18.7}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Dirichlet_4.png}   
+            \caption{$\lambda_{4}=-20.9}
+\end{subfigure}\quad             
+        \caption{Modes for a triangle with Dirichlet boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:triangle_Dirichlet}
+        \end{figure}    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Neumann_0.png}   
+            \caption{$\lambda_{0}=-3.36}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Neumann_1.png}   
+            \caption{$\lambda_{1}=-4.62}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Neumann_2.png}   
+            \caption{$\lambda_{2}=-10.2}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Neumann_3.png}   
+            \caption{$\lambda_{3}=-14.0}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_triangle_Neumann_4.png}   
+            \caption{$\lambda_{4}=-17.3}
+\end{subfigure}\quad             
+        \caption{Modes for a triangle with Neumann boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:triangle_Neumann}
+        \end{figure}    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Dirichlet_0.png}   
+            \caption{$\lambda_{0}=-9.21}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Dirichlet_1.png}   
+            \caption{$\lambda_{1}=-9.98}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Dirichlet_2.png}   
+            \caption{$\lambda_{2}=-13.0}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Dirichlet_3.png}   
+            \caption{$\lambda_{3}=-17.6}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Dirichlet_4.png}   
+            \caption{$\lambda_{4}=-22.5}
+\end{subfigure}\quad             
+        \caption{Modes for a disks with Dirichlet boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:disks_Dirichlet}
+        \end{figure}    
+        \begin{figure}  
+        \centering  
+           
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Neumann_0.png}   
+            \caption{$\lambda_{0}=-4.89}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Neumann_1.png}   
+            \caption{$\lambda_{1}=-4.99}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Neumann_2.png}   
+            \caption{$\lambda_{2}=-11.1}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Neumann_3.png}   
+            \caption{$\lambda_{3}=-14.7}
+\end{subfigure}\quad             
+            \begin{subfigure}{0.3\linewidth}    
+            \includegraphics[width=\linewidth]{FIGS/eigenmodes_disks_Neumann_4.png}   
+            \caption{$\lambda_{4}=-17.4}
+\end{subfigure}\quad             
+        \caption{Modes for a disks with Neumann boundary conditions on   
+        the top and bottom wall.}
+        \label{fig:disks_Neumann}
+        \end{figure}
 \bibliography{references,fliss_feppon}
 \bibliographystyle{acm}
 \end{document}
